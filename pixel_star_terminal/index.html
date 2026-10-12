@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIXEL STAR · 星舰任务终端</title>
+
+
+
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/cockpit.css">
+<link rel="stylesheet" href="css/bridge.css">
+<script src="js/startup-guard.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/three.module.js"
+  }
+}
+</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">跳到任务控制台</a>
+<canvas id="spaceCanvas" aria-hidden="true"></canvas>
+<div class="porthole" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+<div id="boot" class="boot">
+  <div class="boot-inner">
+    <p class="boot-logo">PIXEL STAR</p>
+    <p class="boot-text" id="bootText">SYSTEM BOOTING...</p>
+    <div class="boot-bar"><i id="bootBar"></i></div>
+  </div>
+</div>
+
+<header class="topbar">
+  <div class="brand"><span class="brand-mark" aria-hidden="true"><svg class="rocket-logo" viewBox="0 0 32 40" shape-rendering="crispEdges"><path fill="#143349" d="M12 0h8v4h4v8h4v8h4v14h-8v-4h-4v6h-8v-6H8v4H0V20h4v-8h4V4h4z"/><path fill="#bfeaf1" d="M14 2h4v4h4v8h2v16H8V14h2V6h4z"/><path fill="#7ab5c9" d="M18 6h4v8h2v16h-6z"/><path fill="#7be4e2" d="M4 20h4v10H2v-6h2zm20 0h4v4h2v6h-6z"/><path fill="#143349" d="M12 12h8v10h-8z"/><path fill="#73e4e4" d="M14 14h4v6h-4z"/><path fill="#efffff" d="M14 14h2v2h-2z"/><path fill="#547588" d="M10 28h12v4H10z"/><g class="rocket-flame"><path fill="#f6b776" d="M12 32h8v4h-2v4h-4v-4h-2z"/><path fill="#ffe9b7" d="M14 32h4v4h-4z"/></g></svg></span><div class="logo">PIXEL<span class="accent">STAR</span><small>星舰任务终端 / COMMAND DECK</small></div></div>
+  <div class="header-motto"><span>你的每一步，都通往星辰。</span><strong>保持航向，向下一颗星出发。</strong></div>
+  <div class="command-clock" aria-label="本地日期与时间">
+    <span class="clock-caption">LOCAL TIME / 舰桥标准时</span>
+    <time id="hudTime" class="command-time" aria-live="off">00:00:00</time>
+    <div class="clock-calendar"><span id="chipDate">----年--月--日</span><span id="todayDate">星期一</span></div>
+  </div>
+  <div class="topbar-right">
+    <button class="px-mini motion-toggle" id="motionToggle" aria-pressed="false">Ⅱ 暂停动态</button>
+    <span class="chip streak">STREAK <b id="chipStreak">0</b> 天</span>
+    <button class="icon-btn" id="soundToggle" title="音效开关">♪</button>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="side" aria-label="主导航"><div class="nav-caption">DECK / 01<br><span>舰载导航</span></div>
+    <button class="nav-btn active" data-view="today"><span class="nav-ico">◉</span>今日舰桥</button>
+    <button class="nav-btn" data-view="calendar"><span class="nav-ico">◧</span>巡航日历</button>
+    <button class="nav-btn" data-view="goals"><span class="nav-ico">◈</span>目标星图</button>
+    <button class="nav-btn" data-view="stats"><span class="nav-ico">▣</span>数据中心</button>
+    <button class="nav-btn" data-view="settings"><span class="nav-ico">◇</span>档案仓库</button>
+    <div class="side-foot"><div class="ship-badge">✧</div><b>探索，从今天开始。</b><span>每一个小任务<br>都是前进的坐标。</span><i></i> LOCAL SYSTEM / 在线</div>
+  </nav>
+
+  <main class="main" id="main" tabindex="-1">
+    <div class="deck-heading"><div><span class="eyebrow" id="sectionCode">01 / MISSION CONTROL</span><h2 id="sectionTitle">今日舰桥</h2></div><span class="deck-status"><i class="status-dot"></i> 所有系统运行正常</span></div>
+
+    <!-- ============ 今日舰桥 · 领航员操作面板 ============ -->
+    <section class="view active" id="view-today">
+      <div class="panel helm-panel">
+        <div class="helm-bg" aria-hidden="true">
+          <div class="radar"><i class="radar-sweep"></i><i class="blip b1"></i><i class="blip b2"></i></div>
+          <span class="coord c1">37.77°N · 122.41°W</span>
+          <span class="coord c2">ORBIT SYNCED // 轨道已同步</span>
+          <div class="stripes"></div>
+        </div>
+        <div class="titlebar">
+          <span class="tb-btns" aria-hidden="true"><i class="tb-min"></i><i class="tb-max"></i><i class="tb-close"></i></span>
+          <span class="tb-title">MISSION QUEUE / 今日任务序列</span>
+          <span class="tb-ver">v2.1</span>
+        </div>
+        <div class="helm-hud">
+          <div class="hud-block">
+            <span class="hud-title">READY, CAPTAIN</span>
+            <span class="hud-sub">欢迎回来，领航员。</span>
+          </div>
+          <div class="hud-right">
+            <div class="eq"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="hud-leds"><i class="led on"></i><i class="led on"></i><i class="led blink"></i><i class="led"></i></div>
+          </div>
+        </div>
+        <div class="hud-telemetry" aria-label="模拟航行参数">
+          <span>航行模拟 / HDG 227°</span><span>WARP 3.2</span><span>SEC 7G-α</span><span>FUEL 86%</span><span>SHD 100%</span>
+          <span class="bridge-msg" id="bridgeMsg">// 今日任务已就绪，等待执行</span>
+        </div>
+        <div class="scan-sweep"></div>
+
+        <div class="stat-row">
+          <div class="stat-box"><span class="stat-num" id="statDone">0</span><span class="stat-label">已完成</span></div>
+          <div class="stat-box"><span class="stat-num" id="statTotal">0</span><span class="stat-label">总任务</span></div>
+          <div class="stat-box"><span class="stat-num"><span id="statRate">0</span>%</span><span class="stat-label">完成率</span></div>
+          <div class="stat-box"><span class="stat-num" id="statStreak">0</span><span class="stat-label">连续打卡</span></div>
+        </div>
+
+        <div class="add-row">
+          <input type="text" id="taskInput" class="px-input" placeholder="输入新任务，回车确认..." maxlength="60">
+          <select id="taskCat" class="px-select"></select>
+          <button class="px-btn primary" id="taskAdd">＋ 添加</button>
+        </div>
+
+        <div id="overdueWrap" class="hidden">
+          <h3 class="sub-title warn">⏰ 逾期任务</h3>
+          <ul id="overdueList" class="task-list"></ul>
+        </div>
+
+        <h3 class="sub-title">▸ 待执行清单 <span>MISSION LOG</span></h3>
+        <ul id="todayList" class="task-list"></ul>
+        <div id="todayEmpty" class="empty"><span class="empty-orbit" aria-hidden="true">✧</span><strong>新的航程，等待你的第一条指令</strong><span>在上方输入任务，按回车开始今日巡航。</span></div>
+      </div>
+      <aside class="flight-rail" aria-label="今日航行概览">
+        <section class="instrument"><div class="instrument-title">◈ 航程进度 <span>01</span></div><div class="orbit-meter" id="orbitMeter"><div><strong id="orbitValue">0<span>%</span></strong><small>今日完成率</small></div></div><p id="orbitMessage">等待第一条任务指令</p><div class="mini-divider"></div><div class="instrument-data"><span>已完成 <b id="railDone">00</b></span><span>待执行 <b id="railPending">00</b></span></div></section>
+        <section class="instrument scanner"><div class="instrument-title">⌖ 深空雷达 <span>SIM</span></div><div class="radar-display" aria-hidden="true"><i></i><b class="ping p1"></b><b class="ping p2"></b><b class="ping p3"></b><span>＋</span></div><div class="radar-caption">模拟航道 · 信号稳定</div></section>
+        <section class="instrument comm"><div class="instrument-title">◈ 深空通信 <span>LIVE</span></div><ul class="comm-list">
+          <li><i class="dot ok"></i>信号链路 <b>正常</b></li>
+          <li><i class="dot ok"></i>数据同步 <b>正常</b></li>
+          <li><i class="dot ok"></i>舰体状态 <b>稳定</b></li>
+          <li><i class="dot mid"></i>引擎输出 <b><span id="commEngine">86</span>%</b></li>
+          <li><i class="dot ok"></i>护盾强度 <b>100%</b></li>
+        </ul></section>
+        <button class="route-link" data-route="goals"><span>下一站 · 长期目标<small>绘制你的目标星图</small></span><b>↗</b></button>
+      </aside>
+    </section>
+
+    <!-- ============ 巡航日历（只读） ============ -->
+    <section class="view" id="view-calendar">
+      <div class="panel">
+        <div class="titlebar">
+          <span class="tb-btns" aria-hidden="true"><i class="tb-min"></i><i class="tb-max"></i><i class="tb-close"></i></span>
+          <span class="tb-title">CALENDAR.SYS — 巡航日志回放</span>
+          <span class="tb-ver">RO</span>
+        </div>
+        <div class="panel-head">
+          <h2>▍巡航日历 <span class="panel-sub">// 计划与回放</span></h2>
+          <div class="cal-nav">
+            <button class="px-mini" id="calPrev">◀ 上月</button>
+            <span class="cal-title" id="calTitle">---- · --</span>
+            <button class="px-mini" id="calNext">下月 ▶</button>
+            <button class="px-mini" id="calToday">◉ 回到今天</button>
+          </div>
+        </div>
+        <div class="cal-week">
+          <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
+        </div>
+        <div class="cal-wrap">
+          <div class="cal-main">
+            <div class="cal-grid" id="calGrid"></div>
+          </div>
+          <dialog class="cal-side" id="calSide" aria-labelledby="calDetailTitle" aria-describedby="calSub"><div class="holo-code" aria-hidden="true">▰ HOLO-LINK / 日程通讯已建立</div>
+            <div class="cs-head">
+              <h3 id="calDetailTitle">▸ ----.--.--</h3>
+              <button class="t-del" id="calClose" title="收起面板">✕</button>
+            </div>
+            <div class="cs-sub" id="calSub">// 完成 0/0</div>
+            <div class="cs-add">
+              <input id="calAddInput" class="px-input" placeholder="提前为这一天制定计划..." maxlength="60">
+              <select id="calAddCat" class="px-select"></select>
+              <button id="calAddBtn" class="px-btn primary">＋</button>
+            </div>
+            <ul id="calTaskList" class="task-list"></ul>
+            <div id="calEmpty" class="empty">// 这一天没有任务记录</div>
+            <div class="holo-foot">ESC 收起 · 更改自动保存</div>
+          </dialog>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 目标星图 ============ -->
+    <section class="view" id="view-goals">
+      <div class="panel">
+        <div class="titlebar">
+          <span class="tb-btns" aria-hidden="true"><i class="tb-min"></i><i class="tb-max"></i><i class="tb-close"></i></span>
+          <span class="tb-title">STARMAP.EXE — 长期航线规划</span>
+          <span class="tb-ver">v2.1</span>
+        </div>
+        <div class="panel-head">
+          <h2>▍目标星图</h2>
+          <button class="px-btn primary" id="goalNew">＋ 新建目标</button>
+        </div>
+
+        <div id="goalForm" class="goal-form hidden">
+          <input id="goalTitle" class="px-input" placeholder="目标名称，如：六个月内转职前端" maxlength="30">
+          <input id="goalDesc" class="px-input" placeholder="一句话描述（可选）" maxlength="60">
+          <div class="btn-row">
+            <button class="px-btn primary" id="goalCreate">确认</button>
+            <button class="px-btn" id="goalCancel">取消</button>
+          </div>
+        </div>
+
+        <div id="goalList"></div>
+        <div id="goalEmpty" class="empty">// 还没有长期目标，点击右上角"新建目标"点亮第一颗星</div>
+      </div>
+    </section>
+
+    <!-- ============ 数据中心 ============ -->
+    <section class="view" id="view-stats">
+      <div class="panel">
+        <div class="titlebar">
+          <span class="tb-btns" aria-hidden="true"><i class="tb-min"></i><i class="tb-max"></i><i class="tb-close"></i></span>
+          <span class="tb-title">DATACORE.EXE — 航行数据分析</span>
+          <span class="tb-ver">v2.1</span>
+        </div>
+        <div class="panel-head">
+          <h2>▍数据中心</h2>
+          <span class="panel-sub">// 航行记录回溯</span>
+        </div>
+
+        <div class="stat-grid">
+          <div class="card">
+            <h3>像素热力图 <span class="dimtxt">· 近 20 周</span></h3>
+            <canvas id="heatmap" role="img" aria-label="近20周完成任务热力图；文字数据见完成记录" width="322" height="114"></canvas>
+            <div class="heat-legend"><span>少</span><i class="h0"></i><i class="h1"></i><i class="h2"></i><i class="h3"></i><span>多</span></div>
+          </div>
+          <div class="card">
+            <h3>近 30 天完成数 <span class="dimtxt">· 右端为今天</span></h3>
+            <canvas id="barchart" role="img" aria-label="近30天完成任务柱状图；文字数据见完成记录" width="560" height="152"></canvas>
+          </div>
+          <div class="card">
+            <h3>任务分布 <span class="dimtxt">· 近 30 天按分类</span></h3>
+            <div class="donut-wrap">
+              <canvas id="donut" role="img" aria-label="近30天已完成任务分类分布；文字数据见完成记录" width="170" height="170"></canvas>
+              <ul id="donutLegend" class="legend"></ul>
+            </div>
+          </div>
+          <div class="card">
+            <h3>巡航日志 <span class="dimtxt">· 自动生成</span></h3>
+            <div id="logText" class="log-text"></div><details id="accessibleStats"><summary>查看完成记录（文字版）</summary></details>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 档案仓库 ============ -->
+    <section class="view" id="view-settings">
+      <div class="panel">
+        <div class="titlebar">
+          <span class="tb-btns" aria-hidden="true"><i class="tb-min"></i><i class="tb-max"></i><i class="tb-close"></i></span>
+          <span class="tb-title">VAULT.SYS — 系统与数据管理</span>
+          <span class="tb-ver">v2.1</span>
+        </div>
+        <div class="panel-head">
+          <h2>▍档案仓库</h2>
+          <span class="panel-sub">// 系统与数据管理</span>
+        </div>
+
+        <div class="set-group">
+          <h3>▸ 数据芯片</h3>
+          <p class="dimtxt">所有数据保存在本机浏览器中（localStorage），不上传任何服务器。建议定期导出备份，防止清理浏览器时丢失。</p>
+          <div class="btn-row">
+            <button class="px-btn" id="exportBtn">⇩ 导出备份</button>
+            <label class="px-btn file-btn">⇧ 导入备份<input type="file" id="importFile" accept=".json,application/json" hidden></label>
+            <button class="px-btn danger" id="resetBtn">✕ 清空数据</button>
+          </div>
+        </div>
+
+        <div class="set-group">
+          <h3>▸ 桌面小组件</h3>
+          <p class="dimtxt">打开同目录下的 <b>widget.html</b> 即是桌面小组件：把它拖到屏幕角落、缩到合适大小，再用微软官方 PowerToys 的「始终置顶」（快捷键 <b>Win + Ctrl + T</b>）钉在桌面上，就能随时打勾。请使用同一浏览器打开；直接以本地文件方式打开时，部分浏览器会隔离页面数据，若不同步请使用主控台。</p>
+          <button class="px-btn" onclick="window.open('widget.html','_blank')">⇗ 打开小组件</button>
+        </div>
+
+        <div class="set-group">
+          <h3>▸ 像素字体</h3>
+          <p class="dimtxt">已随程序内置原版缝合像素字体，解压后即可离线使用，无需安装或联网。</p>
+        </div>
+
+        <div class="set-group">
+          <h3>▸ 系统</h3>
+          <label class="chk-line"><input type="checkbox" id="soundChk" checked> 8-bit 音效（勾选生效）</label>
+          <p class="dimtxt" id="fontStatus">▸ 字体状态：检测中…</p>
+          <p class="dimtxt">PIXEL STAR OS v2.1 · 单机离线运行 · 支持桌面与移动端</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="os-bar">
+  <span class="os-path">C:\PIXEL_STAR&gt;<i class="cursor"></i></span>
+  <span class="os-stat" id="osStat">MEM 42% · STORE OK</span>
+  <span class="os-uptime" id="osUptime">UPTIME 00:00:00</span>
+</footer>
+
+<div id="banner" class="mission-banner hidden">★ MISSION COMPLETE ★</div>
+<div id="toast" role="status" aria-live="polite" class="toast hidden"></div>
+
+
+<!-- 像素字体安装向导 -->
+<div id="fontModal" class="modal-mask hidden">
+  <div class="modal">
+    <h3>⚠ 像素字体未生效</h3>
+    <p class="dimtxt">检测到中文尚未按像素渲染。在线字体源只有西文子集，<b>中文像素字形必须来自本机字体文件</b>。三步搞定（约 1 分钟，之后永久离线可用）：</p>
+    <ol class="modal-steps">
+      <li>浏览器访问 <b>github.com/TakWolf/fusion-pixel-font</b>，进入 Releases</li>
+      <li>下载 <b>fusion-pixel-12px-proportional</b> 开头的 zip 并解压</li>
+      <li>右键 <b>fusion-pixel-12px-proportional-zh_hans.ttf</b> →「为所有用户安装」→ 重启浏览器</li>
+    </ol>
+    <div class="btn-row">
+      <button class="px-btn primary" id="fontRecheck">我已安装，重新检测</button>
+      <button class="px-btn" id="fontModalClose">稍后再说</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/store.js"></script>
+<script src="js/sfx.js"></script>
+<script src="js/app.js"></script>
+<script src="js/cockpit.js"></script>
+<script type="module" src="js/space-scene.js"></script>
+<script src="js/accessibility.js"></script>
+<script src="js/bridge-ui.js"></script>
+</body>
+</html>

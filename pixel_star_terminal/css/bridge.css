@@ -1,0 +1,272 @@
+/* ============================================================
+   BRIDGE UI · 舰桥任务终端（圆角玻璃 HUD 风格）
+   仅重绘界面皮肤，不改动太空背景（#spaceCanvas / space-scene.js）
+   ============================================================ */
+
+:root{
+  --br-cyan:#7be4e2;
+  --br-cyan-hi:#a8f6f4;
+  --br-line:rgba(126,206,220,.42);
+  --br-line-soft:rgba(126,206,220,.24);
+  --br-glass:linear-gradient(180deg, rgba(8,24,38,.78), rgba(5,17,28,.68));
+  --br-glass-soft:linear-gradient(180deg, rgba(10,30,46,.62), rgba(6,20,32,.55));
+  --br-glow:0 10px 40px rgba(0,0,0,.38), inset 0 1px 0 rgba(170,235,244,.10);
+}
+
+/* ---------- 圆角玻璃面板（去掉像素尖角与硬投影） ---------- */
+.panel,#view-calendar .panel{
+  border-radius:20px!important;
+  border:1px solid var(--br-line)!important;
+  background:var(--br-glass)!important;
+  backdrop-filter:blur(12px) saturate(1.12)!important;
+  -webkit-backdrop-filter:blur(12px) saturate(1.12)!important;
+  box-shadow:var(--br-glow)!important;
+}
+.panel::before,.panel::after{display:none!important}
+.titlebar{
+  border-radius:19px 19px 0 0!important;
+  background:linear-gradient(180deg, rgba(23,56,74,.55), rgba(12,32,46,.42))!important;
+  border:0!important;
+  border-bottom:1px solid var(--br-line-soft)!important;
+}
+.tb-title{color:var(--br-cyan-hi)!important;letter-spacing:3px}
+
+/* ---------- 顶栏：悬浮玻璃条 + 时钟卡片 ---------- */
+.topbar{
+  margin:12px 12px 0;
+  border-radius:18px!important;
+  border:1px solid var(--br-line-soft)!important;
+  background:linear-gradient(180deg, rgba(6,18,30,.62), rgba(4,13,22,.52))!important;
+  backdrop-filter:blur(10px) saturate(1.1)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(1.1)!important;
+  box-shadow:0 8px 30px rgba(0,0,0,.32), inset 0 1px 0 rgba(170,235,244,.08);
+}
+.command-clock{
+  padding:10px 30px 12px;
+  border:1px solid var(--br-line-soft);
+  border-radius:16px;
+  background:linear-gradient(180deg, rgba(10,28,44,.52), rgba(6,18,30,.44));
+  box-shadow:inset 0 1px 0 rgba(170,235,244,.10), 0 4px 18px rgba(0,0,0,.25);
+}
+.clock-caption{color:var(--br-cyan)!important}
+.command-time{
+  color:#f2fbff!important;
+  text-shadow:0 0 22px rgba(123,228,226,.35)!important;
+  font-family:var(--en)!important;
+}
+.motion-toggle,.chip.streak,.icon-btn{
+  border-radius:10px!important;
+  border:1px solid var(--br-line-soft)!important;
+  background:rgba(10,30,46,.5)!important;
+  box-shadow:none!important;
+}
+.icon-btn{width:40px;height:40px}
+.motion-toggle:hover,.icon-btn:hover{border-color:var(--br-cyan)!important;box-shadow:0 0 12px rgba(123,228,226,.28)!important}
+.header-motto strong{color:#eaf6fb}
+
+/* ---------- 左侧导航：胶囊按钮 + 高亮激活态 ---------- */
+.side{
+  border:1px solid var(--br-line-soft)!important;
+  background:linear-gradient(180deg, rgba(6,18,30,.55), rgba(4,13,22,.46))!important;
+  backdrop-filter:blur(10px)!important;
+  -webkit-backdrop-filter:blur(10px)!important;
+}
+.nav-btn{
+  border-radius:13px!important;
+  border:1px solid transparent!important;
+  color:#b9d3df!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  transition:background .16s,border-color .16s,transform .16s,box-shadow .16s,color .16s!important;
+}
+.nav-btn .nav-ico{
+  width:30px;height:30px;flex:none;
+  display:grid;place-items:center;
+  border:1px solid var(--br-line-soft);
+  border-radius:9px;
+  font-size:13px;color:var(--br-cyan);
+  background:rgba(10,30,46,.42);
+  transition:.16s;
+}
+.nav-btn:hover{
+  background:rgba(20,52,70,.42)!important;
+  border-color:var(--br-line-soft)!important;
+  transform:translateX(3px);
+}
+.nav-btn:hover::before{display:none!important}
+.nav-btn.active{
+  background:linear-gradient(135deg,#9bf7f3,#4fd8d6)!important;
+  border-color:transparent!important;
+  color:#062430!important;
+  font-weight:bold;
+  box-shadow:0 0 18px rgba(110,235,232,.42), 0 4px 14px rgba(0,0,0,.3)!important;
+}
+.nav-btn.active .nav-ico{
+  border-color:rgba(6,36,48,.45);
+  color:#062430;
+  background:rgba(255,255,255,.22);
+}
+.side-foot b{color:#dcecF3}
+.ship-badge{text-shadow:0 0 18px rgba(123,228,226,.55)}
+
+/* ---------- 区块标题 / 状态标签 ---------- */
+.deck-heading>div{
+  border-radius:12px!important;
+  border:1px solid var(--br-line-soft)!important;
+  border-left:3px solid var(--br-cyan)!important;
+  background:rgba(6,18,30,.5)!important;
+}
+.deck-heading h2{color:#eef8fb!important;text-shadow:0 0 14px rgba(123,228,226,.3)!important}
+.eyebrow{color:var(--br-cyan)!important}
+.deck-status{border-radius:999px!important;border:1px solid var(--br-line-soft)!important}
+
+/* ---------- 舰桥 HUD / 遥测条 ---------- */
+.helm-hud{
+  border-radius:14px!important;
+  border:1px solid var(--br-line-soft)!important;
+  background:var(--br-glass-soft)!important;
+}
+.hud-title{color:var(--br-cyan-hi)!important;text-shadow:0 0 14px rgba(123,228,226,.45)!important;letter-spacing:3px}
+.hud-telemetry{
+  border-radius:0 0 14px 14px!important;
+  border:1px solid var(--br-line-soft)!important;
+  border-top:0!important;
+  background:rgba(8,24,38,.5)!important;
+}
+
+/* ---------- 统计格 ---------- */
+.stat-box{
+  border-radius:14px!important;
+  border:1px solid var(--br-line-soft)!important;
+  background:var(--br-glass-soft)!important;
+  transition:.16s;
+}
+.stat-box:hover{
+  border-color:var(--br-cyan)!important;
+  box-shadow:0 0 16px rgba(123,228,226,.22)!important;
+  transform:translateY(-3px);
+}
+.stat-num{color:var(--br-cyan-hi)!important;text-shadow:0 0 12px rgba(123,228,226,.5)!important}
+
+/* ---------- 输入与按钮：圆角化 ---------- */
+.px-input,.px-select{
+  border-radius:11px!important;
+  border:1px solid var(--br-line-soft)!important;
+  background:rgba(6,21,35,.6)!important;
+}
+.px-input:focus,.px-select:focus{border-color:var(--br-cyan)!important;box-shadow:0 0 14px rgba(123,228,226,.22)!important}
+.px-btn{
+  border-radius:11px!important;
+  box-shadow:none!important;
+  border:1px solid var(--br-cyan)!important;
+  background:rgba(18,52,70,.55)!important;
+}
+.px-btn:hover{box-shadow:0 0 14px rgba(123,228,226,.35)!important}
+.px-btn:active{transform:translateY(1px)}
+.px-btn.primary{
+  background:linear-gradient(135deg,#8df3f0,#45d2d2)!important;
+  border-color:transparent!important;
+  color:#062430!important;
+  box-shadow:0 0 16px rgba(110,235,232,.35)!important;
+}
+.px-btn.primary:hover{box-shadow:0 0 22px rgba(110,235,232,.55)!important}
+.px-mini{border-radius:9px!important;border:1px solid var(--br-line-soft)!important;background:rgba(10,30,46,.45)!important}
+
+/* ---------- 任务列表 ---------- */
+.task{
+  border-radius:13px!important;
+  border:1px solid var(--br-line-soft)!important;
+  background:var(--br-glass-soft)!important;
+  transition:.16s;
+}
+.task:hover{
+  border-color:var(--br-cyan)!important;
+  box-shadow:0 0 14px rgba(123,228,226,.18), inset 0 0 22px rgba(123,228,226,.05)!important;
+}
+.chk{border-radius:5px!important}
+.t-cat{border-radius:6px!important}
+.task.done{
+  border-color:rgba(156,230,180,.45)!important;
+  background:linear-gradient(90deg, rgba(70,160,120,.16), rgba(70,160,120,.04) 60%, transparent)!important;
+}
+.sub-title{color:#ffb692!important}
+
+/* ---------- 日历 ---------- */
+.cal-cell{border-radius:12px!important;border:1px solid var(--br-line-soft)!important}
+.cal-cell.today{border-color:#ffb692!important}
+.cal-side{border-radius:18px!important}
+.cal-side::before,.cal-side::after{display:none!important}
+
+/* ---------- 目标 / 数据中心 / 档案 ---------- */
+.goal-form{border-radius:14px!important}
+.goal-card,.card,.set-group{
+  border-radius:14px!important;
+  border:1px solid var(--br-line-soft)!important;
+  background:var(--br-glass-soft)!important;
+}
+.pbar{border-radius:8px!important;border:1px solid var(--br-line-soft)!important}
+.pbar>i{border-radius:6px}
+.empty{border-radius:14px!important}
+
+/* ---------- 右侧航行仪表 ---------- */
+.instrument{
+  border-radius:18px!important;
+  border:1px solid var(--br-line-soft)!important;
+  background:var(--br-glass)!important;
+  backdrop-filter:blur(10px)!important;
+  -webkit-backdrop-filter:blur(10px)!important;
+  box-shadow:var(--br-glow)!important;
+}
+.instrument-title{font-size:14px;color:#e8f5f8!important}
+.instrument-title span{color:var(--br-cyan);font-family:var(--en);font-size:10px}
+.orbit-meter{outline-color:rgba(123,228,226,.4)!important}
+.orbit-meter>div{border:5px solid rgba(20,42,59,.9)!important;background:rgba(6,20,32,.82)!important}
+.orbit-meter strong{color:var(--br-cyan-hi)!important;text-shadow:0 0 14px rgba(123,228,226,.45)!important}
+.radar-display{border-color:rgba(123,228,226,.4)!important}
+.route-link{
+  border-radius:16px!important;
+  border:1px solid var(--br-line-soft)!important;
+  background:linear-gradient(135deg, rgba(18,52,72,.6), rgba(10,32,48,.5))!important;
+  transition:.16s;
+}
+.route-link:hover{border-color:var(--br-cyan)!important;box-shadow:0 0 16px rgba(123,228,226,.22)!important}
+
+/* ---------- 深空通信 状态面板 ---------- */
+.comm-list{list-style:none;margin-top:14px;display:flex;flex-direction:column}
+.comm-list li{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 2px;font-size:13px;color:#c8dde8;
+  border-bottom:1px solid rgba(126,206,220,.12);
+  letter-spacing:1px;
+}
+.comm-list li:last-child{border-bottom:0}
+.comm-list b{margin-left:auto;color:#eaf6f9;font-weight:400;font-family:var(--en);font-size:11px}
+.comm-list .dot{width:7px;height:7px;border-radius:50%;flex:none}
+.comm-list .dot.ok{background:#39d98a;box-shadow:0 0 8px rgba(57,217,138,.8)}
+.comm-list .dot.mid{background:#7be4e2;box-shadow:0 0 8px rgba(123,228,226,.8);animation:commblink 2.2s ease-in-out infinite}
+@keyframes commblink{50%{opacity:.45}}
+
+/* ---------- 底部系统栏 ---------- */
+.os-bar{
+  border-top:1px solid var(--br-line-soft)!important;
+  background:linear-gradient(180deg, rgba(5,16,26,.66), rgba(3,10,17,.6))!important;
+  backdrop-filter:blur(10px)!important;
+  -webkit-backdrop-filter:blur(10px)!important;
+}
+
+/* ---------- 弹窗 / 横幅 / 提示 ---------- */
+.modal{border-radius:18px!important;box-shadow:0 0 34px rgba(244,211,149,.2), 0 18px 60px rgba(0,0,0,.5)!important}
+.mission-banner{border-radius:16px!important}
+.toast{border-radius:12px!important}
+
+/* ---------- 舷窗四角 brackets 回归（圆角风格） ---------- */
+@media(min-width:1024px){
+  .porthole{display:block;border-radius:24px}
+  .porthole i{border-color:rgba(126,206,220,.22)}
+}
+
+/* ---------- 大屏下侧边栏做成悬浮面板 ---------- */
+@media(min-width:1024px){
+  .side{margin:14px 0 14px 14px;border-radius:18px!important}
+  .layout{gap:2px}
+}
